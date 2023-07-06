@@ -1,9 +1,7 @@
 import fetch from "node-fetch";
 
-const appKey = "fake app key";
-
 async function getArrivals(stopCode) {
-  const arrivalsResponse = await fetch(`https://api.tfl.gov.uk/StopPoint/${stopCode}/Arrivals?app_key=${appKey}`);
+  const arrivalsResponse = await fetch(`https://api.tfl.gov.uk/StopPoint/${stopCode}/Arrivals`);
   const arrivalPredictions = await arrivalsResponse.json();
 
   return arrivalPredictions;
