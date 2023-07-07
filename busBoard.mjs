@@ -1,7 +1,24 @@
 import fetch from "node-fetch";
 
+import winston from "winston";
+const logger = winston.createLogger({
+  transports: [
+    new winston.transports.Console(),
+    new winston.transports.File({ filename: 'combined.log' })
+  ]
+});
+
 async function getArrivals(stopCode) {
-  const arrivalsResponse = await fetch(`https://api.tfl.gov.uk/StopPoint/${stopCode}/Arrivals`);
+  const url = `https://api.tfl.gov.uk/StopPoint/${stopCode}/Arrivals`;
+  const arrivalsResponse = await fetch(url);
+
+  if (!arrivalsResponse.ok) {
+    logger.error(`Fetch failed while getting arrivals for stop code ${stopCode}`);
+    logger.error(`Returned with status ${arrivalsResponse.status} ${arrivalsResponse.statusText}`);
+    logger.error(`URL used: ${`https://api.tfl.gov.uk/StopPoint/${stopCode}/Arrivals`}`);
+    throw new Error(`Fetch failed while getting arrivals for stop code ${stopCode}`);
+  }
+
   const arrivalPredictions = await arrivalsResponse.json();
 
   return arrivalPredictions;
